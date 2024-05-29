@@ -139,8 +139,28 @@ interface FastEthernet0/4
 switchport access vlan 50
 no shutdown
 exit
+------------
+0 start
+1 Programma is gestart(print)
+2 is er een auto voor de slagboom? (ruit)
+3 is het de einde van de dag(ruit)nee ga terug naar stap2(loop) ja door naar4
+4 stop het programma vervolgens print hij op het(einde van de dag) koppel met 6
+scherm aantal gecontroleerde kentekens en de aantallen OK en VERSCHIL (print)
+5 apparaat uit tijdens sluitingstijd
+6 Einde
+7 scanner scant de benodigde informatie()stap2 ja 
+8 data gaat naar de Data.csv
+9 de informatie van data.csv word vergeleken maar de vasteinfo.csv
+10 komt de data overeen met de vasteinfo.csv(ruit/keuzemoment)
+11 komt overeen met vasteinfo.csv(ja)
+12u mag door rijden slagboom gaat omhoog
+13 kenteken komt niet overeen met rdw.csv(nee)
+14 op scherm verschil met lijst met geobserveerde eigenschappen versus de
+geregistreerde eigenschappen.(print)
+15 je hebt geen toegang (print)
+16 licht de beveiliging en politie in
 
-
+---------
 import csv
 from datetime import datetime
 #hier vraag ik de tijd van nu aan en start ik de signalering programma
