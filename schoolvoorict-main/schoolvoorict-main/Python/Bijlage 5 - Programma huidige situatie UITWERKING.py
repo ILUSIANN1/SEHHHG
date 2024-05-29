@@ -158,3 +158,56 @@ while True:
                 #Stap 10.1 - Updaten bijde databases
                 updatenDB(CatalogusFile,';',Catalogus)
                 updatenDB(LedenFile,";",Leden)
+-
+import csv
+from datetime import datetime
+#hier vraag ik de tijd van nu aan en start ik de signalering programma
+huidige_tijd = datetime.now()
+tijd = huidige_tijd.strftime("%Y-%m-%d %H:%M:%S")
+print("= = =  programma kentekensignalering gestart = = = ", tijd)
+legenvals = input("Wil je het bestand vals.txt leegmaken? (j of n): ")
+if legenvals == 'j':
+    with open("vals.txt", "w") as leeg:
+        print("Het bestand vals.txt is leeggemaakt.")
+if legenvals == 'n':
+    print("Het bestand vals.txt wordt niet leeggemaakt.")
+valsaanpas = open("vals.txt", "a" if legenvals == 'n' else "w")#hier maak ik vals.txt leeg
+aantalfout = 0
+aantalverwerkt=0
+#hier lees ik 1 voor 1 de gescande auto's uit de csv bestand en check
+with open("GescandeData.csv", "r") as gescandlees:
+    for auto in gescandlees:
+        aantalverwerkt+=1
+        if len(auto) < 10: #dit doe ik zodat alles wat ik heb gelezen dat geen 10 tekens geeft eruit wordt gefiltert.
+            continue
+
+        autodelen = auto.split(",")#hier gebruikt ik split zodat alles gesplist word waar een comma heeft
+        if len(autodelen) < 3: #hier gebruik ik <3 zodat alles wat minder dan 3waardes heeft eruit wordt gehaald
+            continue
+
+        kenteken,merk,Type = autodelen[0], autodelen[1], autodelen[2].strip()#ik gebruik .stripzodat alle extra spacties en legen ruimtes verwijdert wordt
+        match = False
+        with open("RDW.csv", "r") as rdwlees:
+            for rdwauto in rdwlees:
+                rdwautodelen = rdwauto.split(",")
+                if len(rdwautodelen) < 4:#hier gebruik ik <4 zodat alles wat minder dan 3waardes heeft eruit wordt gehaald
+                    continue
+
+                rdwkenteken, rdwmerk, rdwtype = rdwautodelen[0], rdwautodelen[2], rdwautodelen[3].strip()
+                if kenteken == rdwkenteken:
+                    match = True
+                    break
+        if match == False: #door dit haalt hij elke ondbekende kenteken eruit
+            aantalverwerkt += 1
+            print("Onbekend kenteken:",kenteken,merk,Type)
+            valsaanpas.write(f"Onbekend,{kenteken},{merk},{Type}\n")#hier voeg ik de onbekende kentekens naar 
+        else:
+            if merk != rdwmerk or Type != rdwtype:#hier vergelijk ik de auto's zodat ik wat het zelfde is kan onderscheiden en kan printen
+                aantalfout += 1
+                print("Onjuist kenteken:",kenteken,merk,Type)
+                print("Geregistreerd op:",rdwkenteken,rdwmerk,rdwtype)
+                valsaanpas.write(f"Onjuist,{kenteken},{merk},{Type}\n")
+valsaanpas.close()#hier sluit ik de txt bestand die ik open op lijn16
+print("Eindtotalen KentekenCheck:")
+print("Aantal verwerkt:",aantalverwerkt,"\nAantal fout",aantalfout)
+print("= = = programma kentekensignalering afgesloten = = =",tijd)
